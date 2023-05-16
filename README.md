@@ -1,7 +1,8 @@
-# Ansible
-## Bootstrap
-Making elementary need files to startup with Ansibale 
-It makes directories in /homa/username/Ansible
+## Ansible
+### Bootstrap
+Genesis.sh 
+    - Makes elementary need files to startup with Ansible 
+        It makes directories in /homa/username/Ansible
 
 ```html
 └──Ansible
