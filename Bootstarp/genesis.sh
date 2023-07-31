@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Get the directory from the user
 echo "Enter the directory where you want to create the Ansible project:(/home/babak)"
 read directory
