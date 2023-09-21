@@ -24,5 +24,4 @@ echo "---" > ${project_directory}/playbook.yml
 echo "- hosts: myhosts" >> ${project_directory}/playbook.yml
 echo "  roles:" >> ${project_directory}/playbook.yml
 echo "    - example_role" >> ${project_directory}/playbook.yml
-
 echo "Ansible project has been created at ${project_directory}"
