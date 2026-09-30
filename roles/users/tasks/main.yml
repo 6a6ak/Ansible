@@ -1,0 +1,24 @@
+---
+- name: Select administrative group for the operating system
+  ansible.builtin.set_fact:
+    admin_privileged_group: "{{ 'sudo' if ansible_facts.os_family == 'Debian' else 'wheel' }}"
+  tags: [users]
+
+- name: Create the administrative user
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    groups: "{{ (admin_user_groups + [admin_privileged_group]) | unique }}"
+    append: true
+    shell: "{{ admin_user_shell }}"
+    create_home: true
+    state: present
+  tags: [users]
+
+- name: Deploy administrative public keys
+  ansible.posix.authorized_key:
+    user: "{{ admin_user }}"
+    key: "{{ item }}"
+    state: present
+  loop: "{{ admin_user_ssh_public_keys }}"
+  no_log: true
+  tags: [users, ssh_keys]

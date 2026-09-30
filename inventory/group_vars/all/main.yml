@@ -1,0 +1,16 @@
+---
+# Set environment-specific values in an untracked vault.yml when needed.
+admin_user: infraadmin
+admin_user_groups: []
+admin_user_ssh_public_keys: []
+
+ssh_permit_root_login: prohibit-password
+ssh_password_authentication: false
+
+firewall_manage: false
+firewall_allowed_tcp_ports:
+  - 22
+
+node_exporter_version: 1.8.2
+node_exporter_listen_address: 0.0.0.0:9100
+node_exporter_extra_args: []

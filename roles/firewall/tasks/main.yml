@@ -1,0 +1,54 @@
+---
+- name: Install firewalld on RHEL-compatible systems
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+  when: firewall_manage | bool and ansible_facts.os_family == 'RedHat'
+  tags: [firewall]
+
+- name: Enable firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+  when: firewall_manage | bool and ansible_facts.os_family == 'RedHat'
+  tags: [firewall]
+
+- name: Allow configured TCP ports with firewalld
+  ansible.posix.firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop: "{{ firewall_allowed_tcp_ports }}"
+  when: firewall_manage | bool and ansible_facts.os_family == 'RedHat'
+  tags: [firewall]
+
+- name: Install UFW on Debian systems
+  ansible.builtin.package:
+    name: ufw
+    state: present
+  when: firewall_manage | bool and ansible_facts.os_family == 'Debian'
+  tags: [firewall]
+
+- name: Configure UFW default incoming policy
+  community.general.ufw:
+    direction: incoming
+    policy: deny
+  when: firewall_manage | bool and ansible_facts.os_family == 'Debian'
+  tags: [firewall]
+
+- name: Allow configured TCP ports with UFW
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: "{{ firewall_allowed_tcp_ports }}"
+  when: firewall_manage | bool and ansible_facts.os_family == 'Debian'
+  tags: [firewall]
+
+- name: Enable UFW after rules are present
+  community.general.ufw:
+    state: enabled
+  when: firewall_manage | bool and ansible_facts.os_family == 'Debian'
+  tags: [firewall]

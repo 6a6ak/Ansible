@@ -1,0 +1,5 @@
+---
+common_packages: [curl, vim, git, unzip, tar, chrony]
+common_sysctl_settings:
+  net.ipv4.ip_forward: 0
+  net.ipv4.conf.all.rp_filter: 1

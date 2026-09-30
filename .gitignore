@@ -1,0 +1,12 @@
+# Secrets and local Ansible state
+*.vault
+vault_pass.txt
+*.pem
+*.key
+*.crt
+inventory/hosts.local.ini
+inventory/group_vars/all/vault.yml
+*.retry
+.ansible/
+__pycache__/
+.venv/

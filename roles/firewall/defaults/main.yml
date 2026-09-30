@@ -1,0 +1,5 @@
+---
+# Enable only after reviewing required application ports.
+firewall_manage: false
+firewall_allowed_tcp_ports: [22]
+firewall_allowed_udp_ports: []

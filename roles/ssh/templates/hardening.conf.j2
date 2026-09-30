@@ -1,0 +1,8 @@
+# Managed by Ansible. Keep an existing administrator key before disabling passwords.
+PermitRootLogin {{ ssh_permit_root_login }}
+PasswordAuthentication {{ 'yes' if ssh_password_authentication else 'no' }}
+KbdInteractiveAuthentication no
+X11Forwarding {{ 'yes' if ssh_x11_forwarding else 'no' }}
+MaxAuthTries 4
+ClientAliveInterval 300
+ClientAliveCountMax 2

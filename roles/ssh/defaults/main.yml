@@ -1,0 +1,5 @@
+---
+ssh_permit_root_login: prohibit-password
+ssh_password_authentication: false
+ssh_x11_forwarding: false
+ssh_service_name: "{{ 'ssh' if ansible_facts.os_family == 'Debian' else 'sshd' }}"

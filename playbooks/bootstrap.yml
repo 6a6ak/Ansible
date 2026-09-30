@@ -1,0 +1,12 @@
+---
+- name: Apply baseline Linux configuration
+  hosts: linux
+  become: true
+  gather_facts: true
+  roles:
+    - role: common
+      tags: [common, bootstrap]
+    - role: users
+      tags: [users, bootstrap]
+    - role: ssh
+      tags: [ssh, bootstrap]

@@ -1,0 +1,36 @@
+---
+- name: Update APT package cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_facts.os_family == 'Debian'
+  tags: [common, packages]
+
+- name: Update DNF package cache
+  ansible.builtin.dnf:
+    update_cache: true
+  when: ansible_facts.os_family == 'RedHat'
+  tags: [common, packages]
+
+- name: Install common administration packages
+  ansible.builtin.package:
+    name: "{{ common_packages }}"
+    state: present
+  tags: [common, packages]
+
+- name: Configure baseline kernel parameters
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_set: true
+    reload: true
+  loop: "{{ common_sysctl_settings | dict2items }}"
+  tags: [common, sysctl]
+
+- name: Enable time synchronization service
+  ansible.builtin.service:
+    name: "{{ 'chrony' if ansible_facts.os_family == 'Debian' else 'chronyd' }}"
+    state: started
+    enabled: true
+  tags: [common, time]

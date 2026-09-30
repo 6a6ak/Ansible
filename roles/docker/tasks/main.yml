@@ -1,0 +1,64 @@
+---
+- name: Install Docker prerequisites on Debian
+  ansible.builtin.apt:
+    name: [ca-certificates, curl, gnupg]
+    state: present
+    update_cache: true
+  when: ansible_facts.os_family == 'Debian'
+  tags: [docker]
+
+- name: Add Docker repository on Debian
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris: "https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}"
+    suites: ["{{ ansible_facts.distribution_release }}"]
+    components: [stable]
+    architectures: ["{{ 'amd64' if ansible_facts.architecture == 'x86_64' else ansible_facts.architecture }}"]
+    signed_by: "https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}/gpg"
+    state: present
+  when: ansible_facts.os_family == 'Debian'
+  tags: [docker]
+
+- name: Install Docker packages on Debian
+  ansible.builtin.apt:
+    name: "{{ ['docker-ce', 'docker-ce-cli', 'containerd.io'] + (['docker-compose-plugin'] if docker_install_compose_plugin else []) }}"
+    state: present
+    update_cache: true
+  when: ansible_facts.os_family == 'Debian'
+  notify: Restart Docker
+  tags: [docker]
+
+- name: Add Docker repository on RHEL-compatible systems
+  ansible.builtin.yum_repository:
+    name: docker-ce-stable
+    description: Docker CE Stable
+    baseurl: "https://download.docker.com/linux/centos/$releasever/$basearch/stable"
+    gpgcheck: true
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    enabled: true
+  when: ansible_facts.os_family == 'RedHat'
+  tags: [docker]
+
+- name: Install Docker packages on RHEL-compatible systems
+  ansible.builtin.dnf:
+    name: "{{ ['docker-ce', 'docker-ce-cli', 'containerd.io'] + (['docker-compose-plugin'] if docker_install_compose_plugin else []) }}"
+    state: present
+  when: ansible_facts.os_family == 'RedHat'
+  notify: Restart Docker
+  tags: [docker]
+
+- name: Enable Docker service
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+  tags: [docker]
+
+- name: Add requested users to Docker group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  loop: "{{ docker_users }}"
+  tags: [docker]
